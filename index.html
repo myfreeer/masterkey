@@ -978,9 +978,10 @@
 </head>
 <body>
 <script type="text/javascript">
-var domainName=location.hostname;
+function makePassword(domain){
+    var domainName=domain;
 try{
-domainName=location.hostname.match(/[^w{3}\.]([a-zA-Z0-9]([a-zA-Z0-9\-]{0,65}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}/gim,"")[0];
+domainName=domain.match(/[^w{3}\.]([a-zA-Z0-9]([a-zA-Z0-9\-]{0,65}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}/gim,"")[0];
 } catch(e){
 //console.log(e);
 }
@@ -993,7 +994,27 @@ var aesCtr = new aesjs.ModeOfOperation.ctr(bytesKey);
 var encryptedBytes = aesCtr.encrypt(textBytes);
 var shaEncrypted=sha256(encryptedBytes)
 var password=shaEncrypted.substring(0,passwordLength);
-console.log(password);
+return password;
+}
+console.log(makePassword(location.hostname));
+console.log(makePassword('https://github.com/ricmoo/aes-js/blob/master/index.js'));
+console.log(makePassword('github.com'));
+console.log(makePassword('https://github.com/ricmoo/aes-js/blob/master/index.js'));
+console.log(makePassword('github.com'));
+console.log(makePassword('bbs.github.com'));
+console.log(makePassword('https://bbs.github.com/ricmoo/aes-js/blob/master/index.js'));
+console.log(makePassword('bbs.github.com'));
+console.log(makePassword('https://bbs.github.com/ricmoo/aes-js/blob/master/index.js'));
+console.log(makePassword('https://docss.github.com/ricmoo/aes-js/blob/master/index.js'));
+console.log(makePassword('docss.github.com'));
+console.log(makePassword('https://docss.github.com/ricmoo/aes-js/blob/master/index.js'));
+console.log(makePassword('docss.github.com'));
+console.log(makePassword('http://www.iana.org/domains/root/db'));
+console.log(makePassword('www.iana.org'));
+console.log(makePassword('iana.org'));
+console.log(makePassword('https://raw.githubusercontent.com/emn178/js-sha256/master/src/sha256.js'));
+console.log(makePassword('raw.githubusercontent.com'));
+console.log(makePassword('githubusercontent.com'));
 </script>
 </body>
 </html>
