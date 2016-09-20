@@ -978,46 +978,32 @@
 </head>
 <body>
 <script type="text/javascript">
-function matchURI(uri){    let domainName=uri;
-try{
-let separatedURI=uri.match(/(\w[-\w]*\w)/g);
-domainName=separatedURI.length>1?separatedURI[separatedURI.length-2]:domainName;
-} catch(e){
-//console.log(e);
+function matchURI(uri) {
+    let domainName = uri;
+    try {
+        let separatedURI = uri.match(/(\w[-\w]*\w)/g);
+        domainName = separatedURI.length > 1 ? separatedURI[separatedURI.length - 2] : domainName;
+    } catch (e) {
+        //console.log(e);
+    }
+    return domainName;
 }
-return domainName;}
-function makePassword(domain){
-    let domainName=matchURI(domain);
-let masterKey='make one by yourself! do NOT use the defule value!';
-let passwordLength=12;//better less than 30
-let shaKey=sha256(masterKey);
-let bytesKey = aesjs.util.convertStringToBytes(shaKey.substring(0,32));
-let textBytes = aesjs.util.convertStringToBytes(domainName);
-let aesCtr = new aesjs.ModeOfOperation.ctr(bytesKey);
-let encryptedBytes = aesCtr.encrypt(textBytes);
-let shaEncrypted=sha256(encryptedBytes)
-let password=shaEncrypted.substring(0,passwordLength);
-return password;
+
+function makePassword(domain) {
+    let domainName = matchURI(domain);
+    let masterKey = 'make one by yourself! do NOT use the defule value!';
+    let passwordLength = 12; //better less than 30
+    let shaKey = sha256(masterKey);
+    let bytesKey = aesjs.util.convertStringToBytes(shaKey.substring(0, 32));
+    let textBytes = aesjs.util.convertStringToBytes(domainName);
+    let aesCtr = new aesjs.ModeOfOperation.ctr(bytesKey);
+    let encryptedBytes = aesCtr.encrypt(textBytes);
+    let shaEncrypted = sha256(encryptedBytes)
+    let password = shaEncrypted.substring(0, passwordLength);
+    return password;
 }
+
 console.log(makePassword(location.hostname));
-console.log(makePassword('https://github.com/ricmoo/aes-js/blob/master/index.js'));
-console.log(makePassword('github.com'));
-console.log(makePassword('https://github.com/ricmoo/aes-js/blob/master/index.js'));
-console.log(makePassword('github.com'));
-console.log(makePassword('bbs.github.com'));
-console.log(makePassword('https://bbs.github.com/ricmoo/aes-js/blob/master/index.js'));
-console.log(makePassword('bbs.github.com'));
-console.log(makePassword('https://bbs.github.com/ricmoo/aes-js/blob/master/index.js'));
-console.log(makePassword('https://docss.github.com/ricmoo/aes-js/blob/master/index.js'));
-console.log(makePassword('docss.github.com'));
-console.log(makePassword('https://docss.github.com/ricmoo/aes-js/blob/master/index.js'));
-console.log(makePassword('docss.github.com'));
-console.log(makePassword('http://www.iana.org/domains/root/db'));
-console.log(makePassword('www.iana.org'));
-console.log(makePassword('iana.org'));
-console.log(makePassword('https://raw.githubusercontent.com/emn178/js-sha256/master/src/sha256.js'));
-console.log(makePassword('raw.githubusercontent.com'));
-console.log(makePassword('githubusercontent.com'));
 </script>
 </body>
 </html>
