@@ -978,22 +978,25 @@
 </head>
 <body>
 <script type="text/javascript">
-function makePassword(domain){
-    var domainName=domain;
+function matchURI(uri){    let domainName=uri;
 try{
-domainName=domain.match(/[^w{3}\.]([a-zA-Z0-9]([a-zA-Z0-9\-]{0,65}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}/gim,"")[0];
+let separatedURI=uri.match(/(\w[-\w]*\w)/g);
+domainName=separatedURI.length>1?separatedURI[separatedURI.length-2]:domainName;
 } catch(e){
 //console.log(e);
 }
-var masterKey='make one by yourself! do NOT use the defule value!';
-var passwordLength=12;//better less than 30
-var shaKey=sha256(masterKey);
-var bytesKey = aesjs.util.convertStringToBytes(shaKey.substring(0,32));
-var textBytes = aesjs.util.convertStringToBytes(masterKey);
-var aesCtr = new aesjs.ModeOfOperation.ctr(bytesKey);
-var encryptedBytes = aesCtr.encrypt(textBytes);
-var shaEncrypted=sha256(encryptedBytes)
-var password=shaEncrypted.substring(0,passwordLength);
+return domainName;}
+function makePassword(domain){
+    let domainName=matchURI(domain);
+let masterKey='make one by yourself! do NOT use the defule value!';
+let passwordLength=12;//better less than 30
+let shaKey=sha256(masterKey);
+let bytesKey = aesjs.util.convertStringToBytes(shaKey.substring(0,32));
+let textBytes = aesjs.util.convertStringToBytes(masterKey);
+let aesCtr = new aesjs.ModeOfOperation.ctr(bytesKey);
+let encryptedBytes = aesCtr.encrypt(textBytes);
+let shaEncrypted=sha256(encryptedBytes)
+let password=shaEncrypted.substring(0,passwordLength);
 return password;
 }
 console.log(makePassword(location.hostname));
