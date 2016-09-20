@@ -989,13 +989,13 @@ function matchURI(uri) {
     return domainName;
 }
 
-function makePassword(domain, masterKey, passwordLength) {
+function makePassword(domain, masterKey, passwordLength1) {
     let domainName = matchURI(domain);
     if (!!masterKey) {
         console.log("masterKey is required to make a password");
         return false;
     }
-    let passwordLength = !!passwordLength ? passwordLength : 12;
+    let passwordLength = !!passwordLength1 ? passwordLength1 : 12;
     let shaKey = sha256(masterKey);
     let bytesKey = aesjs.util.convertStringToBytes(shaKey.substring(0, 32));
     let textBytes = aesjs.util.convertStringToBytes(domainName);
