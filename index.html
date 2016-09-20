@@ -991,7 +991,7 @@ function matchURI(uri) {
 
 function makePassword(domain, masterKey, passwordLength1) {
     let domainName = matchURI(domain);
-    if (!!masterKey) {
+    if (typeof masterKey == "undefined") {
         console.log("masterKey is required to make a password");
         return false;
     }
