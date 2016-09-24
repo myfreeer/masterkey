@@ -997,7 +997,11 @@ function makePassword(domain, masterKey, passwordLength1) {
     }
     let passwordLength = !!passwordLength1 ? passwordLength1 : 12;
     let shaKey = sha256(masterKey);
-    let bytesKey = aesjs.util.convertStringToBytes(shaKey.substring(0, 32));
+    //let bytesKey = aesjs.util.convertStringToBytes(shaKey.substring(0, 32));
+    let bytesKey = new Array();
+    for (let i = 0; i < 32; i++) {
+        bytesKey.push(parseInt(shaKey.substr(i * 2, 2), 16));
+    }
     let textBytes = aesjs.util.convertStringToBytes(domainName);
     let aesCtr = new aesjs.ModeOfOperation.ctr(bytesKey);
     let encryptedBytes = aesCtr.encrypt(textBytes);
@@ -1006,7 +1010,7 @@ function makePassword(domain, masterKey, passwordLength1) {
     return password;
 }
 
-console.log(makePassword(location.hostname, "input your preferred masterKey here inside quotation marks", 16));
+console.log('Password Generated for' + location.hostname + ':\n' + makePassword(location.hostname, "input your preferred masterKey here inside quotation marks", 16));
 </script>
 </body>
 </html>
