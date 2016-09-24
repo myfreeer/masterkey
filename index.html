@@ -824,7 +824,7 @@
   var sha512 = function(message, bits) {
     var h0h, h0l, h1h, h1l, h2h, h2l, h3h, h3l, 
         h4h, h4l, h5h, h5l, h6h, h6l, h7h, h7l, block, code, end = false,
-        i, j, index = 0, start = 0, bytes = 0, length = message.length,
+        i, j, index = 0, start = 0, bytes = 0, length = message.length - 1,
         s0h, s0l, s1h, s1l, c1, c2, c3, c4, 
         abh, abl, dah, dal, cdh, cdl, bch, bcl,
         majh, majl, t1h, t1l, t2h, t2l, chh, chl;
