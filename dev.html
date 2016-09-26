@@ -48,7 +48,7 @@ makePassword:function (domain, masterKey, passwordLength1) {
 //makePassword2 can have both uppercase and lowercase with a shortet length compared to makePassword
 makePassword2:function makePassword2(domain, masterKey, passwordLength1) {
     let passwordLength = !!passwordLength1 ? passwordLength1 : 12;
-    let encodedPassword = Base64.encode(String.fromCharCode.apply(null, parseSha(masterkey.makePassword(domain, masterKey, passwordLength1)))).replace(/[\\\/\+\=]/g, "");
+    let encodedPassword = Base64.encode(String.fromCharCode.apply(null, masterkey.parseSha(masterkey.makePassword(domain, masterKey, passwordLength1)))).replace(/[\\\/\+\=]/g, "");
     return encodedPassword.substring(0, passwordLength);
 }
     }
