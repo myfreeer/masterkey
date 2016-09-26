@@ -53,7 +53,7 @@ makePassword2:function makePassword2(domain, masterKey, passwordLength1) {
 }
     }
 
-console.log('Password Generated for "' + parseHostName(location.hostname) + '" :\n' + masterkey.makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16));
+console.log('Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :\n' + masterkey.makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16));
 </script>
 </body>
 </html>
