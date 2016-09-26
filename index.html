@@ -1089,14 +1089,15 @@ function parseSha(sha, length) {
     for (let i = 0; i < length; i++) {
         bytesKey.push(parseInt(sha.substr(i * 2, 2), 16));
     }
-    return bytesKey;
+    return new Uint8Array(bytesKey);
 }
 
 function parseHostName(hostname) {
-    let hostNameArray=hostname.split('.');
-    let hostLength=hostNameArray.length;
-    let parsedHostName=hostLength>1?hostNameArray[hostLength-2]:hostname;
-    if (hostLength>2) if (hostNameArray[hostLength-2].match(/com|org|net|int|edu|gov|mil/g)) parsedHostName=hostNameArray[hostLength-3];
+    let hostNameArray = hostname.split('.');
+    let hostLength = hostNameArray.length;
+    let parsedHostName = hostLength > 1 ? hostNameArray[hostLength - 2] : hostname;
+    if (hostLength > 2)
+        if (hostNameArray[hostLength - 2].match(/com|org|net|int|edu|gov|mil/g)) parsedHostName = hostNameArray[hostLength - 3];
     return parsedHostName;
 }
 
@@ -1120,11 +1121,10 @@ function makePassword(domain, masterKey, passwordLength1) {
 //makePassword2 can have both uppercase and lowercase with a shortet length compared to makePassword
 function makePassword2(domain, masterKey, passwordLength1) {
     let passwordLength = !!passwordLength1 ? passwordLength1 : 12;
-    let encodedPassword = Base64.encode(String.fromCharCode.apply(null, new Uint8Array(parseSha(makePassword(domain, masterKey, passwordLength1))))).replace(/[\\\/\+\=]/g, "");
+    let encodedPassword = Base64.encode(String.fromCharCode.apply(null, parseSha(makePassword(domain, masterKey, passwordLength1)))).replace(/[\\\/\+\=]/g, "");
     return encodedPassword.substring(0, passwordLength);
 }
 
-console.log('Password Generated for "' + parseHostName(location.hostname) + '" :\n' + makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16));
-</script>
+console.log('Password Generated for "' + parseHostName(location.hostname) + '" :\n' + makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16));</script>
 </body>
 </html>
