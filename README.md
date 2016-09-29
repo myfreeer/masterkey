@@ -26,5 +26,16 @@ use`masterkey.makePassword2(domain, masterKey, passwordLength)`to make a passwor
 ###Example
 `masterkey.makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16);`
 
+###Bookmarklet
+```js
+javascript:(function(){if (typeof masterkey=='undefined')document.body.appendChild(document.createElement('script')).src='https://myfreeer.github.io/masterkey/src/masterkey_full.js';prompt('Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :', masterkey.makePassword2(location.hostname, '/****/', 16));})();
+```
+
+**Important: Replace the** `/****/` **inside quotation marks with your preferred string as a masterkey before use**
+
+Due to network or browser reason, you might need to **click it twice** to show the result
+
+Bookmarklet might be blocked by [Content Security Policy](https://en.wikipedia.org/wiki/Content_Security_Policy)
+
 ##TODO
 auto-filling feature for userscript version
