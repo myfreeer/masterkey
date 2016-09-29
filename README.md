@@ -28,12 +28,12 @@ use`masterkey.makePassword2(domain, masterKey, passwordLength)`to make a passwor
 
 ###Bookmarklet
 ```js
-javascript:(function(){if (typeof masterkey=='undefined')document.body.appendChild(document.createElement('script')).src='https://myfreeer.github.io/masterkey/src/masterkey_full.js';prompt('Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :', masterkey.makePassword2(location.hostname, '/****/', 16));})();
+javascript:(function() {var script = document.createElement('script');script.onload = function() {prompt('Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :', masterkey.makePassword2(location.hostname, '/****/', 16))};script.src = "https://myfreeer.github.io/masterkey/src/masterkey_full.js";document.getElementsByTagName('head')[0].appendChild(script);})();
 ```
 
 **Important: Replace the** `/****/` **inside quotation marks with your preferred string as a masterkey before use**
 
-Due to network or browser reason, you might need to **click it twice** to show the result
+Due to network or browser reason, you might need to wait some seconds for the script to be loaded
 
 Bookmarklet might be blocked by [Content Security Policy](https://en.wikipedia.org/wiki/Content_Security_Policy)
 
