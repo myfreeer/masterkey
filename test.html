@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>MasterKey Password Generater</title>
+<script type="text/javascript" src="https://myfreeer.github.io/masterkey/src/sha512.js"></script>
+<script type="text/javascript" src="https://myfreeer.github.io/masterkey/src/aes.js"></script>
+<script type="text/javascript" src="https://myfreeer.github.io/masterkey/src/base64.js"></script>
+<script type="text/javascript" src="https://myfreeer.github.io/masterkey/src/masterkey.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+var test={
+host:["","abc.com.us","def.com.us","abc.net.us","google.con","google.chk","github.ms","github.com","abc.github.fu"],
+result:["cf83e1357eefb8bd", "6bc4fefcf05445c1", "4e7bcb2dbc42d6d1", "6bc4fefcf05445c1", "b8b6ec7bb539756c", "b8b6ec7bb539756c", "e1d0c0808807551c", "e1d0c0808807551c", "e1d0c0808807551c"],
+result2:["w4Cg8OhNX7Dr8K4w", "a8OEw77DvMOwVEXD", "TnvDiy3CvELDlsOR", "a8OEw77DvMOwVEXD", "wrjCtsOse8K1OXVs", "wrjCtsOse8K1OXVs", "w6HDkMOAwoDCiAdV", "w6HDkMOAwoDCiAdV", "w6HDkMOAwoDCiAdV"]
+};
+//for (let i=0;i<test.host.length;i++){test.result2.push(masterkey.makePassword2(test.host[i], "input your preferred masterKey here inside quotation marks", 16));}
+console.log('test for makePassword');
+for (let i=0;i<test.host.length;i++)console.log(test.result[i]==masterkey.makePassword(test.host[i], "input your preferred masterKey here inside quotation marks", 16));
+console.log('test for makePasswordfromShaStr');
+for (let i=0;i<test.host.length;i++)console.log(test.result[i]==masterkey.makePasswordfromShaStr(test.host[i], "7e48ee26b259c2cdefb663c5a1720562c19f2513f50def2530174fe8fd8b3e8f", 16));
+console.log('test for makePassword2');
+for (let i=0;i<test.host.length;i++)console.log(test.result2[i]==masterkey.makePassword2(test.host[i], "input your preferred masterKey here inside quotation marks", 16));
+console.log('test for makePassword2fromShaStr');
+for (let i=0;i<test.host.length;i++)console.log(test.result2[i]==masterkey.makePassword2fromShaStr(test.host[i], "7e48ee26b259c2cdefb663c5a1720562c19f2513f50def2530174fe8fd8b3e8f", 16));
+</script>
+</body>
+</html>
