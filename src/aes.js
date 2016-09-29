@@ -1,7 +1,7 @@
 //https://github.com/ricmoo/aes-js
-"use strict";
 
 (function(root) {
+    "use strict";
 
     var createBuffer = null, copyBuffer = null, convertBytesToString, convertStringToBytes = null;
 
@@ -35,7 +35,7 @@
             }
             return result;
         }
-    }
+    };
 
     if (typeof(Buffer) === 'undefined') {
         createBuffer = slowCreateBuffer;
@@ -47,7 +47,7 @@
             for (var i = sourceStart; i < sourceEnd; i++) {
                 targetBuffer[targetStart++] = sourceBuffer[i];
             }
-        }
+        };
 
         convertStringToBytes = function(text, encoding) {
 
@@ -60,12 +60,12 @@
 
                     // if it is a % sign, encode the following 2 bytes as a hex value
                     if (c === 37) {
-                        result.push(parseInt(text.substr(i, 2), 16))
+                        result.push(parseInt(text.substr(i, 2), 16));
                         i += 2;
 
                     // otherwise, just the actual byte
                     } else {
-                        result.push(c)
+                        result.push(c);
                     }
                 }
 
@@ -84,7 +84,7 @@
             // @TODO: Base64...
 
             return null;
-        }
+        };
 
         // http://ixti.net/development/javascript/2011/11/11/base64-encodedecode-of-utf8-in-browser-with-js.html
         var Hex = '0123456789abcdef';
@@ -121,28 +121,28 @@
                 return result.join('');
             }
 
-            return result
-        }
+            return result;
+        };
 
     } else {
-        createBuffer = function(arg) { return new Buffer(arg); }
+        createBuffer = function(arg) { return new Buffer(arg); };
 
         copyBuffer = function(sourceBuffer, targetBuffer, targetStart, sourceStart, sourceEnd) {
             sourceBuffer.copy(targetBuffer, targetStart, sourceStart, sourceEnd);
-        }
+        };
 
         convertStringToBytes = function(text, encoding) {
             return new Buffer(text, encoding);
-        }
+        };
 
         convertBytesToString = function(bytes, encoding) {
             return (new Buffer(bytes)).toString(encoding);
-        }
+        };
     }
 
 
     // Number of rounds by keysize
-    var numberOfRounds = {16: 10, 24: 12, 32: 14}
+    var numberOfRounds = {16: 10, 24: 12, 32: 14};
 
     // Round constant words
     var rcon = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91];
@@ -193,7 +193,7 @@
 
         this.key = createBuffer(key);
         this._prepare();
-    }
+    };
 
 
     AES.prototype._prepare = function() {
@@ -284,7 +284,7 @@
                                   U4[ tt        & 0xFF]);
             }
         }
-    }
+    };
 
     AES.prototype.encrypt = function(plaintext) {
         if (plaintext.length != 16) {
@@ -323,7 +323,7 @@
         }
 
         return result;
-    }
+    };
 
     AES.prototype.decrypt = function(ciphertext) {
         if (ciphertext.length != 16) {
@@ -362,7 +362,7 @@
         }
 
         return result;
-    }
+    };
 
 
     /**
@@ -377,7 +377,7 @@
         this.name = "ecb";
 
         this._aes = new AES(key);
-    }
+    };
 
     ModeOfOperationECB.prototype.encrypt = function(plaintext) {
         if ((plaintext.length % 16) !== 0) {
@@ -394,7 +394,7 @@
         }
 
         return ciphertext;
-    }
+    };
 
     ModeOfOperationECB.prototype.decrypt = function(ciphertext) {
         if ((ciphertext.length % 16) !== 0) {
@@ -411,7 +411,7 @@
         }
 
         return plaintext;
-    }
+    };
 
 
     /**
@@ -435,7 +435,7 @@
         this._lastCipherblock = createBuffer(iv);
 
         this._aes = new AES(key);
-    }
+    };
 
     ModeOfOperationCBC.prototype.encrypt = function(plaintext) {
         if ((plaintext.length % 16) !== 0) {
@@ -457,7 +457,7 @@
         }
 
         return ciphertext;
-    }
+    };
 
     ModeOfOperationCBC.prototype.decrypt = function(ciphertext) {
         if ((ciphertext.length % 16) !== 0) {
@@ -479,7 +479,7 @@
         }
 
         return plaintext;
-    }
+    };
 
 
     /**
@@ -507,7 +507,7 @@
         this._shiftRegister = createBuffer(iv);
 
         this._aes = new AES(key);
-    }
+    };
 
     ModeOfOperationCFB.prototype.encrypt = function(plaintext) {
         if ((plaintext.length % this.segmentSize) != 0) {
@@ -529,7 +529,7 @@
         }
 
         return encrypted;
-    }
+    };
 
     ModeOfOperationCFB.prototype.decrypt = function(ciphertext) {
         if ((ciphertext.length % this.segmentSize) != 0) {
@@ -552,7 +552,7 @@
         }
 
         return plaintext;
-    }
+    };
 
     /**
      *  Mode Of Operation - Output Feedback (OFB)
@@ -576,7 +576,7 @@
         this._lastPrecipherIndex = 16;
 
         this._aes = new AES(key);
-    }
+    };
 
     ModeOfOperationOFB.prototype.encrypt = function(plaintext) {
         var encrypted = createBuffer(plaintext);
@@ -590,7 +590,7 @@
         }
 
         return encrypted;
-    }
+    };
 
     // Decryption is symetric
     ModeOfOperationOFB.prototype.decrypt = ModeOfOperationOFB.prototype.encrypt;
@@ -614,7 +614,7 @@
         } else {
             this.setBytes(initialValue);
         }
-    }
+    };
 
     Counter.prototype.setValue = function(value) {
         if (typeof(value) !== 'number' || parseInt(value) != value) {
@@ -625,7 +625,7 @@
             this._counter[index] = value % 256;
             value = value >> 8;
         }
-    }
+    };
 
     Counter.prototype.setBytes = function(bytes) {
         if (bytes.length != 16) {
@@ -643,7 +643,7 @@
                 break;
             }
         }
-    }
+    };
 
 
     /**
@@ -658,7 +658,7 @@
         this.name = "ctr";
 
         if (!(counter instanceof Counter)) {
-            counter = new Counter(counter)
+            counter = new Counter(counter);
         }
 
         this._counter = counter;
@@ -667,7 +667,7 @@
         this._remainingCounterIndex = 16;
 
         this._aes = new AES(key);
-    }
+    };
 
     ModeOfOperationCTR.prototype.encrypt = function(plaintext) {
         var encrypted = createBuffer(plaintext);
@@ -682,7 +682,7 @@
         }
 
         return encrypted;
-    }
+    };
 
     // Decryption is symetric
     ModeOfOperationCTR.prototype.decrypt = ModeOfOperationCTR.prototype.encrypt;
@@ -717,7 +717,7 @@
 
     // node.js
     if (typeof exports !== 'undefined') {
-        module.exports = aesjs
+        module.exports = aesjs;
 
     // RequireJS/AMD
     // http://www.requirejs.org/docs/api.html
