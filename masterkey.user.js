@@ -27,6 +27,5 @@
     }
 
     var mykey = GM_getValue("masterkey");
-    //console.log(mykey);
     console.log('Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :\n' + masterkey.makePassword2fromShaStr(location.hostname, mykey, 16));
 })();
