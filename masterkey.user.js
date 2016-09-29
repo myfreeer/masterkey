@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         masterkey password generater
 // @namespace    myfreeer.github.io
-// @version      0.2
+// @version      0.3
 // @description  a tool to generate password from domain name and your custom key safely
 // @author       myfreeer
 // @match        http://*/*
@@ -28,4 +28,17 @@
 
     var mykey = GM_getValue("masterkey");
     console.log('Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :\n' + masterkey.makePassword2fromShaStr(location.hostname, mykey, 16));
+    var input, F;
+    input = document.getElementsByTagName('input');
+    for (var i = 0; i < input.length; i++) {
+        F = input[i];
+        if (F.type.toLowerCase() == 'password') {
+            try {
+                F.value = masterkey.makePassword2fromShaStr(location.hostname, mykey, 16);
+                F.click();
+                F.focus();
+                F.keydown();
+            } catch (r) {}
+        }
+    }
 })();
