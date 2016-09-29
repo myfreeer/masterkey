@@ -39,7 +39,7 @@
             let textBytes = aesjs.util.convertStringToBytes(domainName);
             let aesCtr = new aesjs.ModeOfOperation.ctr(bytesKey);
             let encryptedBytes = aesCtr.encrypt(textBytes);
-            let shaEncrypted = sha512(aesjs.util.convertBytesToString(encryptedBytes));
+            let shaEncrypted = sha512(String.fromCharCode.apply(null, encryptedBytes));
             let password = shaEncrypted.substring(0, passwordLength);
             return password;
         },
