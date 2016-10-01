@@ -1489,7 +1489,6 @@ var Base64 = {
             return encodedPassword.substring(0, passwordLength);
         };
     var masterkey = {
-        parseSha: parseSha,
         parseHostName: parseHostName,
         makePassword: makePassword,
         makePasswordfromShaStr: makePasswordfromShaStr,

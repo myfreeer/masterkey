@@ -15,7 +15,7 @@
             var hostLength = hostNameArray.length;
             var parsedHostName = hostLength > 1 ? hostNameArray[hostLength - 2] : hostname;
             if (hostLength > 2)
-                if (hostNameArray[hostLength - 2].match(/com|org|net|int|edu|gov|mil|co/g)) parsedHostName = hostNameArray[hostLength - 3];
+                if (hostNameArray[hostLength - 2].match(/com|org|net|int|edu|gov|mil/g) && hostNameArray[hostLength - 2].length < 4) parsedHostName = hostNameArray[hostLength - 3];
             return parsedHostName;
         },
         makePassword = function(domain, masterKey, passwordLength1) {
@@ -63,7 +63,6 @@
             return encodedPassword.substring(0, passwordLength);
         };
     var masterkey = {
-        parseSha: parseSha,
         parseHostName: parseHostName,
         makePassword: makePassword,
         makePasswordfromShaStr: makePasswordfromShaStr,
