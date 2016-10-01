@@ -37,6 +37,9 @@
                 F.value = masterkey.makePassword2fromShaStr(location.hostname, mykey, 16);
                 F.click();
                 F.focus();
+                F.input();
+                F.keyup();
+                F.change();
                 F.keydown();
             } catch (r) {}
         }
