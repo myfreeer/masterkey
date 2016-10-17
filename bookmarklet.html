@@ -9,7 +9,8 @@ var go = function go() {
   var link = 'javascript:(function() {var script = document.createElement(\'script\');script.onload = function() {prompt(\'Password Generated for "\' + masterkey.parseHostName(location.hostname) + \'" :\', masterkey.makePassword2(location.hostname, \'' + masterkey + '\', 16))};script.src = "https://myfreeer.github.io/masterkey/src/masterkey_full.js";document.getElementsByTagName(\'head\')[0].appendChild(script);})();';
   var a = document.createElement('a');
   a.setAttribute('href', link);
-  a.innerHTML = 'Your MasterKey Password Generate';
+  a.innerHTML = 'Your MasterKey Password Generater';
+  document.body.appendChild(document.createElement("br"));
   document.getElementsByTagName('body')[0].appendChild(a);
   return link;
 };
