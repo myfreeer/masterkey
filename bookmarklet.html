@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>MasterKey Bookmarklet Generater</title>
+<script type="text/javascript">
+var go = function go() {
+  var masterkey = document.getElementById('masterkey').value;
+  var link = 'javascript:(function() {var script = document.createElement(\'script\');script.onload = function() {prompt(\'Password Generated for "\' + masterkey.parseHostName(location.hostname) + \'" :\', masterkey.makePassword2(location.hostname, \'' + masterkey + '\', 16))};script.src = "https://myfreeer.github.io/masterkey/src/masterkey_full.js";document.getElementsByTagName(\'head\')[0].appendChild(script);})();';
+  var a = document.createElement('a');
+  a.setAttribute('href', link);
+  a.innerHTML = 'Your MasterKey Password Generate';
+  document.getElementsByTagName('body')[0].appendChild(a);
+  return link;
+};
+</script>
+<body>
+Enter Your MasterKey Here
+<input type="text" id="masterkey"/>
+<input type="button" id="button" value="GO" onclick="go()"/>
+</body>
+</html>
