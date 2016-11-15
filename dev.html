@@ -15,7 +15,7 @@
             for (var i = 0; i < length1; i++) {
                 bytesKey.push(parseInt(sha.substr(i * 2, 2), 16));
             }
-            return bytesKey;
+            return Uint8Array ? new Uint8Array(bytesKey) : bytesKey;
         },
         parseHostName = function(hostname) {
             var hostNameArray = hostname.split('.');
@@ -33,6 +33,43 @@
             var passwordLength = Number(passwordLength1) || 16;
             var shaKey = sha512_256(masterKey);
             return makePasswordfromShaStr(domain, shaKey, passwordLength1);
+        },
+        makePasswordinLoop = function(arrayToEncrypt, encryptKey, loop) {
+            if (typeof encryptKey == "undefined" || typeof arrayToEncrypt == "undefined") {
+                console.warn("ERROR: arrayToEncrypt and encryptKey is required to make a password");
+                return false;
+            }
+            if (encryptKey.length !== 32 || arrayToEncrypt.length !== 32) {
+                console.warn("ERROR: Wrong type of arrayToEncrypt or encryptKey");
+                return false;
+            }
+            var aesCtr = new aesjs.ModeOfOperation.ctr(encryptKey);
+            var encryptedBytes = aesCtr.encrypt(arrayToEncrypt);
+            var shaEncrypted = sha512_256(encryptedBytes);
+            //console.log(loop, String.fromCharCode.apply(null, arrayToEncrypt), String.fromCharCode.apply(null, encryptKey), String.fromCharCode.apply(null, encryptedBytes), shaEncrypted);
+            return (loop && loop > 0) ? makePasswordinLoop(parseSha(shaEncrypted), parseSha(sha512_256((new aesjs.ModeOfOperation.ctr(parseSha(sha512_256(encryptedBytes)))).encrypt(encryptKey))), --loop) : shaEncrypted;
+        },
+        makePasswordLoopfromShaStr = function(domain, shaKey, passwordLength1, loop1) {
+            if (typeof masterKey == "undefined") {
+                console.log("ERROR: masterKey is required to make a password");
+                return false;
+            }
+            var loop = parseInt(loop1) || 0xff;
+            var passwordLength = parseInt(passwordLength1) || 16;
+            var arrayToEncrypt = parseSha(sha512_256(parseHostName(domain)));
+            var encryptKey = parseSha(shaKey);
+            return makePasswordinLoop(arrayToEncrypt, encryptKey, loop).substring(0, passwordLength);
+        },
+        makePasswordLoop = function(domain, masterKey, passwordLength1, loop1) {
+            if (typeof masterKey == "undefined") {
+                console.log("ERROR: masterKey is required to make a password");
+                return false;
+            }
+            var loop = parseInt(loop1) || 0xff;
+            var passwordLength = parseInt(passwordLength1) || 16;
+            var arrayToEncrypt = parseSha(sha512_256(parseHostName(domain)));
+            var encryptKey = parseSha(sha512_256(masterKey));
+            return makePasswordinLoop(arrayToEncrypt, encryptKey, loop).substring(0, passwordLength);
         },
         makePasswordfromShaStr = function(domain, shaKey, passwordLength1) {
             var domainName = parseHostName(domain);
@@ -68,13 +105,25 @@
             var passwordLength = !!passwordLength1 ? passwordLength1 : 16;
             var encodedPassword = Base64.encode(String.fromCharCode.apply(null, parseSha(makePasswordfromShaStr(domain, shaKey, 128)))).replace(/[\\\/\+\=]/g, "");
             return encodedPassword.substring(0, passwordLength);
+        },
+        makePassword2Loop = function(domain, masterKey, passwordLength1, loop1) {
+            var shaKey = sha512_256(masterKey);
+            return makePassword2LoopfromShaStr(domain, shaKey, passwordLength1, loop1);
+        },
+        makePassword2LoopfromShaStr = function(domain, shaKey, passwordLength1, loop1) {
+            var passwordLength = !!passwordLength1 ? passwordLength1 : 16;
+            var encodedPassword = Base64.encode(String.fromCharCode.apply(null, parseSha(makePasswordLoop(domain, shaKey, 128, loop1)))).replace(/[\\\/\+\=]/g, "");
+            return encodedPassword.substring(0, passwordLength);
         };
     var masterkey = {
         parseHostName: parseHostName,
         makePassword: makePassword,
         makePasswordfromShaStr: makePasswordfromShaStr,
         makePassword2: makePassword2,
-        makePassword2fromShaStr: makePassword2fromShaStr
+        makePassword2fromShaStr: makePassword2fromShaStr,
+        makePasswordLoop: makePasswordLoop,
+        makePassword2Loop: makePassword2Loop,
+        makePassword2LoopfromShaStr: makePassword2LoopfromShaStr
     };
     if (typeof exports !== 'undefined') {
         module.exports = masterkey;
@@ -87,21 +136,32 @@
 </script>
 </head>
 <body>
-<script type="text/javascript">document.body.innerText = 'Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :\n' + masterkey.makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16);
+<div id="result"></div>
+<script type="text/javascript">
+var div = document.getElementById('result');
+div.innerText = 'Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :\n' + masterkey.makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16);
 var test = {
     host: ["", "abc.com.us", "def.com.us", "abc.net.us", "google.con", "google.chk", "github.ms", "github.com", "abc.github.fu"],
     result: ["cf83e1357eefb8bd", "6bc4fefcf05445c1", "4e7bcb2dbc42d6d1", "6bc4fefcf05445c1", "b8b6ec7bb539756c", "b8b6ec7bb539756c", "e1d0c0808807551c", "e1d0c0808807551c", "e1d0c0808807551c"],
-    result2: ["w4Cg8OhNX7Dr8K4w", "a8OEw77DvMOwVEXD", "TnvDiy3CvELDlsOR", "a8OEw77DvMOwVEXD", "wrjCtsOse8K1OXVs", "wrjCtsOse8K1OXVs", "w6HDkMOAwoDCiAdV", "w6HDkMOAwoDCiAdV", "w6HDkMOAwoDCiAdV"]
+    result2: ["w4Cg8OhNX7Dr8K4w", "a8OEw77DvMOwVEXD", "TnvDiy3CvELDlsOR", "a8OEw77DvMOwVEXD", "wrjCtsOse8K1OXVs", "wrjCtsOse8K1OXVs", "w6HDkMOAwoDCiAdV", "w6HDkMOAwoDCiAdV", "w6HDkMOAwoDCiAdV"],
+    result3: ["9402695ca5f014db", "f800e165f5d0816b", "776a09f1eaf77f78", "f800e165f5d0816b", "ddf05f1982a97302", "ddf05f1982a97302", "cd90f1c98797624d", "cd90f1c98797624d", "cd90f1c98797624d"],
+    result4: ["woPCkVdw4XCscKuw", "wqB3wqAjN8OmwpXC", "wowEwrrCtcK9w5ca", "wqB3wqAjN8OmwpXC", "w6vDj8OcwrhgWMKR", "w6vDj8OcwrhgWMKR", "w5IMwqTDlWDCiMKg", "w5IMwqTDlWDCiMKg", "w5IMwqTDlWDCiMKg"]
 };
 //for (let i=0;i<test.host.length;i++){test.result2.push(masterkey.makePassword2(test.host[i], "input your preferred masterKey here inside quotation marks", 16));}
-document.body.innerText += '\n\ntest for makePassword: \n';
-for (var i = 0; i < test.host.length; i++) document.body.innerText += test.result[i] == masterkey.makePassword(test.host[i], "input your preferred masterKey here inside quotation marks", 16) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
-document.body.innerText += '\ntest for makePasswordfromShaStr: \n';
-for (var i = 0; i < test.host.length; i++) document.body.innerText += test.result[i] == masterkey.makePasswordfromShaStr(test.host[i], "7e48ee26b259c2cdefb663c5a1720562c19f2513f50def2530174fe8fd8b3e8f", 16) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
-document.body.innerText += '\ntest for makePassword2: \n';
-for (var i = 0; i < test.host.length; i++) document.body.innerText += test.result2[i] == masterkey.makePassword2(test.host[i], "input your preferred masterKey here inside quotation marks", 16) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
-document.body.innerText += '\ntest for makePassword2fromShaStr: \n';
-for (var i = 0; i < test.host.length; i++) document.body.innerText += test.result2[i] == masterkey.makePassword2fromShaStr(test.host[i], "7e48ee26b259c2cdefb663c5a1720562c19f2513f50def2530174fe8fd8b3e8f", 16) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
+div.innerText += '\n\ntest for makePassword: \n';
+for (var i = 0; i < test.host.length; i++) div.innerText += (test.result[i] == masterkey.makePassword(test.host[i], "input your preferred masterKey here inside quotation marks", 16)) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
+div.innerText += '\ntest for makePasswordfromShaStr: \n';
+for (var i = 0; i < test.host.length; i++) div.innerText += (test.result[i] == masterkey.makePasswordfromShaStr(test.host[i], "7e48ee26b259c2cdefb663c5a1720562c19f2513f50def2530174fe8fd8b3e8f", 16)) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
+div.innerText += '\ntest for makePassword2: \n';
+for (var i = 0; i < test.host.length; i++) div.innerText += (test.result2[i] == masterkey.makePassword2(test.host[i], "input your preferred masterKey here inside quotation marks", 16)) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
+div.innerText += '\ntest for makePassword2fromShaStr: \n';
+for (var i = 0; i < test.host.length; i++) div.innerText += (test.result2[i] == masterkey.makePassword2fromShaStr(test.host[i], "7e48ee26b259c2cdefb663c5a1720562c19f2513f50def2530174fe8fd8b3e8f", 16)) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
+div.innerText += '\ntest for makePasswordLoop: \n';
+for (var i = 0; i < test.host.length; i++) div.innerText += (test.result3[i] == masterkey.makePasswordLoop(test.host[i], "input your preferred masterKey here inside quotation marks", 16)) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
+div.innerText += '\ntest for makePassword2Loop: \n';
+for (var i = 0; i < test.host.length; i++) div.innerText += (test.result4[i] == masterkey.makePassword2Loop(test.host[i], "input your preferred masterKey here inside quotation marks", 16)) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
+div.innerText += '\ntest for makePassword2LoopfromShaStr: \n';
+for (var i = 0; i < test.host.length; i++) div.innerText += (test.result4[i] == masterkey.makePassword2LoopfromShaStr(test.host[i], "7e48ee26b259c2cdefb663c5a1720562c19f2513f50def2530174fe8fd8b3e8f", 16)) ? 'Test ' + (i + 1) + ' passed;\n' : 'Test ' + (i + 1) + ' failed;\n';
 </script>
 </body>
 </html>
