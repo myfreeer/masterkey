@@ -57,7 +57,8 @@
           0x3C9EBE0A, 0x15C9BEBC, 0x431D67C4, 0x9C100D4C,
           0x4CC5D4BE, 0xCB3E42B6, 0x597F299C, 0xFC657E2A,
           0x5FCB6FAB, 0x3AD6FAEC, 0x6C44198C, 0x4A475817];
-
+  if (Uint32Array) K = new Uint32Array(K);
+  if (Uint8Array) SHIFT = new Uint8Array(SHIFT);
   var blocks = [];
 
   var sha384 = function(message) {
@@ -73,6 +74,8 @@
   };
 
   var sha512 = function(message, bits) {
+    var notString = typeof message != 'string';
+    if (notString && message.constructor == root.ArrayBuffer) message = new Uint8Array(message);
     var h0h, h0l, h1h, h1l, h2h, h2l, h3h, h3l, 
         h4h, h4l, h5h, h5l, h6h, h6l, h7h, h7l, block, code, end = false,
         i, j, index = 0, start = 0, bytes = 0, length = message.length,
@@ -161,23 +164,29 @@
       blocks[21] = blocks[22] = blocks[23] = blocks[24] =
       blocks[25] = blocks[26] = blocks[27] = blocks[28] =
       blocks[29] = blocks[30] = blocks[31] = blocks[32] = 0;
-      for (i = start;index < length && i < 128; ++index) {
-        code = message.charCodeAt(index);
-        if (code < 0x80) {
-          blocks[i >> 2] |= code << SHIFT[i++ & 3];
-        } else if (code < 0x800) {
-          blocks[i >> 2] |= (0xc0 | (code >> 6)) << SHIFT[i++ & 3];
-          blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
-        } else if (code < 0xd800 || code >= 0xe000) {
-          blocks[i >> 2] |= (0xe0 | (code >> 12)) << SHIFT[i++ & 3];
-          blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
-          blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
-        } else {
-          code = 0x10000 + (((code & 0x3ff) << 10) | (message.charCodeAt(++index) & 0x3ff));
-          blocks[i >> 2] |= (0xf0 | (code >> 18)) << SHIFT[i++ & 3];
-          blocks[i >> 2] |= (0x80 | ((code >> 12) & 0x3f)) << SHIFT[i++ & 3];
-          blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
-          blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+      if (notString) {
+        for (i = start;index < length && i < 64;++index) {
+          blocks[i >> 2] |= message[index] << SHIFT[i++ & 3];
+        }
+      } else {
+        for (i = start;index < length && i < 64;++index) {
+          code = message.charCodeAt(index);
+          if (code < 0x80) {
+            blocks[i >> 2] |= code << SHIFT[i++ & 3];
+          } else if (code < 0x800) {
+            blocks[i >> 2] |= (0xc0 | (code >> 6)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          } else if (code < 0xd800 || code >= 0xe000) {
+            blocks[i >> 2] |= (0xe0 | (code >> 12)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          } else {
+            code = 0x10000 + (((code & 0x3ff) << 10) | (message.charCodeAt(++index) & 0x3ff));
+            blocks[i >> 2] |= (0xf0 | (code >> 18)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 12) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | ((code >> 6) & 0x3f)) << SHIFT[i++ & 3];
+            blocks[i >> 2] |= (0x80 | (code & 0x3f)) << SHIFT[i++ & 3];
+          }
         }
       }
       bytes += i - start;
