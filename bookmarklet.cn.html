@@ -10,7 +10,7 @@ var go = function go() {
   var link = 'javascript:(function() {var script = document.createElement(\'script\');script.onload = function() {prompt(\'为 "\' + masterkey.parseHostName(location.hostname) + \'" 生成的密码：\', masterkey.makePassword2(location.hostname, \'' + masterkey + '\', ' + length + '))};script.src = "https://myfreeer.github.io/masterkey/src/masterkey_full.js";document.getElementsByTagName(\'head\')[0].appendChild(script);})();';
   var a = document.createElement('a');
   a.setAttribute('href', link);
-  a.innerHTML = 'Your MasterKey Password Generater';
+  a.innerHTML = '生成安全密码';
   document.body.appendChild(document.createElement("br"));
   document.getElementsByTagName('body')[0].appendChild(a);
   return link;
