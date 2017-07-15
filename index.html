@@ -1515,6 +1515,17 @@ var Base64 = {
 <script type="text/javascript">
 document.body.innerText = 'Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :\n' + masterkey.makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16);
 console.log('Password Generated for "' + masterkey.parseHostName(location.hostname) + '" :\n' + masterkey.makePassword2(location.hostname, "input your preferred masterKey here inside quotation marks", 16));
+function $i(e) {
+  return document.getElementById(e);
+};
+function eventHandler(e) {
+  return $i('result').value = masterkey.makePassword2($i('url').value, $i('masterkey').value, $i('length').value);
+};
+
+var el = document.createElement('div');
+el.innerHTML = '<br>Demo:<br>URL: <input id="url"><br>MasterKey: <input id="masterkey"><br>Length: <input type="number" id="length"><br>Result: <input id="result" readonly="true">';
+document.body.appendChild(el);
+$i('url').oninput = $i('masterkey').oninput = $i('length').oninput = eventHandler;
 </script>
 </body>
 </html>
