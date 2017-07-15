@@ -1519,9 +1519,10 @@ function $i(e) {
   return document.getElementById(e);
 };
 function eventHandler(e) {
-  return $i('result').value = masterkey.makePassword2($i('url').value, $i('masterkey').value, $i('length').value);
+  var url = $i('url').value;
+  if (url.match(/^https?:\/\//)) new URL(url).hostname;
+  $i('result').value = masterkey.makePassword2(url, $i('masterkey').value, $i('length').value);
 };
-
 var el = document.createElement('div');
 el.innerHTML = '<br>Demo:<br>URL: <input id="url"><br>MasterKey: <input id="masterkey"><br>Length: <input type="number" id="length"><br>Result: <input id="result" readonly="true">';
 document.body.appendChild(el);
