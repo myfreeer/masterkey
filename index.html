@@ -1520,7 +1520,7 @@ function $i(e) {
 };
 function eventHandler(e) {
   var url = $i('url').value;
-  if (url.match(/^https?:\/\//)) new URL(url).hostname;
+  if (url.match(/^https?:\/\//)) url = new URL(url).hostname;
   $i('result').value = masterkey.makePassword2(url, $i('masterkey').value, $i('length').value);
 };
 var el = document.createElement('div');
